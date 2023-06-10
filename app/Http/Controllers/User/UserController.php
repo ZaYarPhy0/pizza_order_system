@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
     public function home(){
-        return view('user.main.home');
+        $product=Product::get();
+        return view('user.main.home',compact('product'));
     }
 }
