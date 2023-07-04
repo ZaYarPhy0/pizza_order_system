@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Storage;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -73,25 +74,45 @@ class AdminController extends Controller
         $admin->appends(request()->all());
         return view('admin.account.adminList',compact('admin'));
     }
+    // user list page
+    public function userList(){
+        $user=User::when(request('key'),function($query){
+            $query->orWhere('name','like','%'.request('key').'%')
+                ->orWhere('email','like','%'.request('key').'%')
+                ->orWhere('gender','like','%'.request('key').'%')
+                ->orWhere('phone','like','%'.request('key').'%')
+                ->orWhere('address','like','%'.request('key').'%');
+        })
+        ->where('role','user')
+        ->paginate(4);
+
+        $user->appends(request()->all());
+        return view('admin.account.userList',compact('user'));
+    }
+    //user ajax
+    public function userAjax(Request $request){
+       $user= User::where('id',$request->userId)->update(['role' =>$request->role]);
+
+    }
     // admin delete account
     public function deleteAccount($id){
         User::where('id',$id)->delete();
         return back()->with(['deleteSuccess'=>'Admin Account delete successfully']);
     }
-    // change role page
-    public function changeRole($id){
-        $account = User::where('id',$id)->first();
-        return view('admin.account.changeRole',compact('account'));
+    // user delete account
+    public function deleteUserAccount($id){
+    User::where('id',$id)->delete();
+    return back()->with(['deleteSuccess'=>'User Account delete successfully']);
+}
+    // change  admin role
+    public function adminAjax(Request $request){
+        $user= User::where('id',$request->adminId)->update(['role' =>$request->role]);
     }
-    //change role
-    public function change(Request $request, $id){
-        $data=[
-            'role'=>$request->role
-        ];
-        User::where('id',$id)->update($data);
-        return redirect()->route('account#adminList');
+    public function contactPage(){
+        $contact=Contact::orderBy('created_at','desc')->paginate(4);
+        $contact->appends(request()->all());
+        return view('admin.account.contactList',compact('contact'));
     }
-
 
 
 

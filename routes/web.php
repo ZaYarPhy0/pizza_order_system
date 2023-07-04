@@ -1,8 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\User\UserController;
@@ -46,13 +49,19 @@ Route::middleware(['auth'])->group(function () {
             Route::post('update/{id}', [AdminController::class, 'update'])->name('account#update');
             // admin list
             Route::get('admin/list', [AdminController::class, 'adminList'])->name('account#adminList');
+
             //admin account delete
             Route::get('admin/delete/{id}', [AdminController::class,'deleteAccount'])->name('account#adminDelete');
             // admin role change Page
-            Route::get('admin/change/rolePage/{id}', [AdminController::class,'changeRole'])->name('account#adminChangeRole');
-            //change role
-            Route::post('admin/change/role/{id}', [AdminController::class,'change'])->name('account#changeRole');
-
+            Route::get('admin/ajax', [AdminController::class,'adminAjax'])->name('account#adminAjax');
+            //user list page
+            Route::get('user/list', [AdminController::class, 'userList'])->name('account#userList');
+            // user list ajax
+            Route::get('user/ajax', [AdminController::class, 'userAjax'])->name('account#userAjax');
+            //user contact page
+            Route::get('user/contact/page', [AdminController::class, 'contactPage'])->name('account#contactPage');
+            // user account delete
+            Route::get('user/delete/{id}', [AdminController::class,'deleteUserAccount'])->name('account#userDelete');
         });
         // category
     Route::group(['prefix'=>'category'],function(){
@@ -87,14 +96,65 @@ Route::middleware(['auth'])->group(function () {
         //pizza update
         Route::post('update',[ProductController::class,'updatePizza'])->name('product#update');
      });
+     //Order
+     Route::group(['prefix'=>'order'],function(){
+        // list page
+        Route::get('list/page',[OrderController::class,'orderPage'])->name('order#listPage');
+        //ajax status search
+        Route::get('list/status/change',[OrderController::class,'orderStatus'])->name('order#statusChange');
+        //ajax order status
+        Route::get('list/ajax/status',[OrderController::class,'orderStatusChange'])->name('order#StatusChange');
+        //order code list page
+        Route::get('orderCode/listPage/{orderCode}',[OrderController::class,'orderCodePage'])->name('order#orderCodeListPage');
+     });
 
 
 
     });
 
+
+
+
+
     //user
     Route::group(['prefix'=>'user','middleware'=>'user_auth'],function(){
+        // home page
        Route::get('home',[UserController::class,'home'])->name('user#home');
+       //contact page
+       Route::get('contact',[UserController::class,'contactPage'])->name('user#contactPage');
+       Route::post('contact/data',[UserController::class,'contact'])->name('user#contact');
+    //    category filter
+       Route::get('filter/{id}',[UserController::class,'filter'])->name('user#filter');
+    //    change Password page
+    Route::get('change/password',[UserController::class,'changePasswordPage'])->name('user#changePasswordPage');
+    // change password
+    Route::post('changePassword',[UserController::class,'changePassword'])->name('user#changePassword');
+    //account
+    Route::group(['prefix'=>'account'],function(){
+        // profile edit page
+        Route::get('editPage',[UserController::class,'editPage'])->name('user#editPage');
+        //update profile
+        Route::post('updateAccount/{id}',[UserController::class,'update'])->name('user#accountUpdate');
+    });
+    // pizza
+    Route::group(['prefix'=>'pizza'],function(){
+        // detail page
+        Route::get('detail/{id}',[UserController::class,'detail'])->name('pizza#detail');
+    });
+    // ajax
+    Route::group(['prefix'=>'ajax'],function(){
+        Route::get('data',[AjaxController::class,'data'])->name('ajax#data');
+        Route::get('count',[AjaxController::class,'pizzaCount'])->name('ajax#pizzaCount');
+        Route::get('order',[AjaxController::class,'order'])->name('ajax#order');
+        Route::get('clear/cart',[AjaxController::class,'clearCart'])->name('ajax#clearCart');
+        Route::get('clear/product',[AjaxController::class,'clearProduct'])->name('ajax#clearProduct');
+        Route::get('view/count',[AjaxController::class,'viewCount'])->name('ajax#viewCount');
+    });
+    //cart
+    Route::group(['prefix'=>'cart'],function(){
+        Route::get('list',[CartController::class,'list'])->name('cart#list');
+        Route::get('history',[CartController::class,'history'])->name('cart#history');
+    });
 
     });
 });

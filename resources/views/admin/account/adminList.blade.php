@@ -8,24 +8,6 @@
         <div class="container-fluid">
             <div class="col-md-12">
                 <!-- DATA TABLE -->
-                <div class="table-data__tool">
-                    <div class="table-data__tool-left">
-                        <div class="overview-wrap">
-                            <h2 class="title-1">Admin List</h2>
-
-                        </div>
-                    </div>
-                    <div class="table-data__tool-right">
-                        <a href="{{ route('category#createPage') }}">
-                            <button class="au-btn au-btn-icon au-btn--green au-btn--small">
-                                <i class="zmdi zmdi-plus"></i>add Category
-                            </button>
-                        </a>
-                        <button class="au-btn au-btn-icon au-btn--green au-btn--small">
-                            CSV download
-                        </button>
-                    </div>
-                </div>
                 {{-- delete alert --}}
                 <div class="col-4 offset-8">
                     @if(session('deleteSuccess'))
@@ -71,11 +53,13 @@
                                 <th>Phone</th>
                                 <th>Address</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($admin as $a)
                             <tr class="tr-shadow">
+                                <input type="hidden" id="adminId" value="{{ $a->id }}" >
                                <td class="col-2">
                                     <div class="image">
                                          @if ($a->image==null)
@@ -91,24 +75,24 @@
                                <td>{{ $a->gender }}</td>
                                <td>{{ $a->phone }}</td>
                                <td>{{ $a->address }}</td>
-
-                                <td>
-                                    <div class="table-data-feature">
-
-                                        @if (Auth::user()->id==$a->id)
+                               <td>
+                               @if (Auth::user()->id==$a->id)
                                         @else
-                                        <a href="{{ route('account#adminChangeRole',$a->id) }}" class="mr-2">
-                                            <button class="item" data-toggle="tooltip" data-placement="top" title="change Role">
-                                                <i class="fa-solid fa-person-circle-minus"></i>
-                                            </button>
-                                        </a>
-                                        <a href="{{ route('account#adminDelete',$a->id) }}"><button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
-                                            <i class="zmdi zmdi-delete"></i>
-                                        </button></a>
-
-
+                                        <select name="" id="role" class="form-control changeRole col-8 bg-secondary text-white">
+                                            <option value="user">user</option>
+                                            <option value="admin" selected>admin</option>
+                                        </select>
                                         @endif
-                                    </div>
+                                </td>
+                                <td>
+                                    @if (Auth::user()->id==$a->id)
+                                             @else
+                                             <a href="{{ route('account#adminDelete',$a->id) }}"><button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
+                                                 <h3><i class="zmdi zmdi-delete"></i></h3>
+                                             </button></a>
+                                             @endif
+                                </td>
+
                                 </td>
                             </tr>
                             <tr class="spacer"></tr>
@@ -124,4 +108,22 @@
     </div>
 </div>
 
+@endsection
+@section('scriptSource')
+<script>
+    $(document).ready(function() {
+        $('.changeRole').change(function(){
+            $parentNode=$(this).parents('tr');
+            $role=$parentNode.find('#role').val();
+            $adminId=$parentNode.find('#adminId').val();
+            $.ajax({
+                type: 'get',
+                url:'http://127.0.0.1:8000/account/admin/ajax',
+                data:{'role':$role,
+            'adminId':$adminId}
+            });
+            location.reload();
+        });
+    });
+</script>
 @endsection

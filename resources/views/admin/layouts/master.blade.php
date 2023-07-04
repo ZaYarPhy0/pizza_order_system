@@ -59,6 +59,18 @@
                             <a href="{{ route('product#pizzaListPage') }}" class="text-decoration-none">
                                 <i class="fa-solid fa-pizza-slice"></i>Product</a>
                         </li>
+                        <li>
+                            <a href="{{ route('order#listPage') }}" class="text-decoration-none">
+                                <i class="fa-solid fa-list-check"></i>Order</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('account#userList') }}" class="text-decoration-none">
+                                <i class="fa-solid fa-users"></i>User lists</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('account#contactPage') }}" class="text-decoration-none">
+                                <i class="fa fa-envelope"></i>Contact</a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -134,7 +146,7 @@
 
                                         </div>
                                         <div class="content">
-                                        <a class="js-acc-btn text-decoration-none" href="#">{{ Auth::user()->name }}<i class="fa-solid fa-user ms-3"></i></a>
+                                        <a class="js-acc-btn text-decoration-none" href="#">{{ Auth::user()->name }}</a>
                                         </div>
                                         <div class="account-dropdown js-dropdown">
                                             <div class="info clearfix">
@@ -224,6 +236,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
 </body>
+
+@yield('scriptSource')
 
 </html>
 <!-- end document-->
